@@ -1,0 +1,166 @@
+# # Uncomment this line to define a global platform for your project
+# platform :ios, '15.0' 
+
+# # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+# ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+# project 'Runner', {
+#   'Debug' => :debug,
+#   'Profile' => :release,
+#   'Release' => :release,
+# }
+
+# def flutter_root
+#   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+#   unless File.exist?(generated_xcode_build_settings_path)
+#     raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+#   end
+
+#   File.foreach(generated_xcode_build_settings_path) do |line|
+#     matches = line.match(/FLUTTER_ROOT\=(.*)/)
+#     return matches[1].strip if matches
+#   end
+#   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+# end
+
+# require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+# flutter_ios_podfile_setup
+
+# target 'Runner' do
+#   use_frameworks! # Needed by many plugins
+  
+#   $GRPC_BUILD_FROM_SOURCE = true
+
+#   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+#   target 'RunnerTests' do
+#     inherit! :search_paths
+#   end
+# end
+
+# post_install do |installer|
+#   installer.pods_project.targets.each do |target|
+#     flutter_additional_ios_build_settings(target)
+
+#     # ======== Remove warnings in BoringSSL (Optional) ========
+#     if target.name == 'BoringSSL-GRPC'
+#       target.source_build_phase.files.each do |file|
+#         if file.settings && file.settings['COMPILER_FLAGS']
+#           flags = file.settings['COMPILER_FLAGS'].split
+#           flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+#           file.settings['COMPILER_FLAGS'] = flags.join(' ')
+#         end
+#       end
+#     end
+#     # ========= End: BoringSSL Warnings Fix =========
+
+#     # ======== Force C++17 + Source build for gRPC-Core =========
+#     target.build_configurations.each do |config|
+#       config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+#       config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+#       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+#       config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+#       config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+
+#       if target.name == 'gRPC-Core'
+#         config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+#         config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+#         config.build_settings['DEFINES_MODULE'] = 'YES'
+#         config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+#       end
+#     end
+#     # ========= End: Build Config Tweaks =========
+#   end
+# end
+# Uncomment this line to define a global platform for your project
+# Uncomment this line to define a global platform for your project
+# Uncomment this line to define a global platform for your project
+# Uncomment this line to define a global platform for your project
+platform :ios, '15.0'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+
+  # DO NOT manually pin gRPC versions here.
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+
+    # Optional: Fix BoringSSL warnings
+    if target.name == 'BoringSSL-GRPC'
+      target.source_build_phase.files.each do |file|
+        if file.settings && file.settings['COMPILER_FLAGS']
+          flags = file.settings['COMPILER_FLAGS'].split
+          flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
+          file.settings['COMPILER_FLAGS'] = flags.join(' ')
+        end
+      end
+    end
+
+    # Set global C++ build settings
+    target.build_configurations.each do |config|
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+      config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+    end
+  end
+end
+
+post_integrate do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'gRPC-Core'
+      file_path = 'Pods/gRPC-Core/src/core/lib/promise/detail/basic_seq.h'
+      begin
+        if File.exist?(file_path)
+          content = File.read(file_path)
+          # Remove the `template` keyword from the problematic function call
+          patched = content.gsub(
+            /Traits::template CheckResultAndRunNext<Wrapped>/,
+            'Traits::CheckResultAndRunNext<Wrapped>'
+          )
+          File.write(file_path, patched)
+          puts "✅ Successfully patched: #{file_path}"
+        else
+          puts "❌ File not found: #{file_path}"
+        end
+      rescue => e
+        puts "❌ Error patching #{file_path}: #{e}"
+      end
+    end
+  end
+end

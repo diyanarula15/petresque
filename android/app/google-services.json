@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "255915452741",
+    "project_id": "petresque-457721",
+    "storage_bucket": "petresque-457721.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255915452741:android:8216a15ea5735a8358f62c",
+        "android_client_info": {
+          "package_name": "com.example.petresque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255915452741-sem3uv2t69kbr0psoo6be4ghcb5sn0qg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.petresque",
+            "certificate_hash": "761df9d14a31eac05a7cbc3715bb3f5469f7ac09"
+          }
+        },
+        {
+          "client_id": "255915452741-m7kvi4vgtvsv23k9ut5j6r7gehoivob2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSqN9FQSH1oGah-3CxWhA6DUjg_VB4Af0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255915452741-m7kvi4vgtvsv23k9ut5j6r7gehoivob2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "255915452741-9tr0gq379ukp86uqsgouk2squom503or.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.petresque"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
